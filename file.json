@@ -134,7 +134,7 @@
             "osProfile": {
                 "computerName": "princessvm1",
                 "adminUsername": "adminUsername",
-                "adminPassword": "adminPassword"
+                "adminPassword": "adminPassword123"
             },
             "storageProfile": {
                 "imageReference": {
