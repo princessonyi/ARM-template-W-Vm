@@ -1,16 +1,45 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {},
+    "parameters": {"storageacct name": {
+        "type": "string",
+        "metadata": {
+            "description": "input storage account name"
+        }
+    },
+        "enter name of public ip": {
+            "type": "string",
+            "defaultValue": "name of public ip"
+        },
+        "enter name of nsg": {
+            "type": "string",
+            "defaultValue": "name of network security interface"
+        },
+        "enter name of vn": {
+            "type": "string",
+            "defaultValue": "enter name of virtual network"
+        },
+        "enter name of ni": {
+            "type": "string",
+            "defaultValue": "enter the name of network interface"
+        },
+        "enter name of vm": {
+            "type": "string",
+            "defaultValue": "enter the name of virtual machine"
+        },
+        "enter name of subnet": {
+            "type": "string",
+            "defaultValue": "name of subnet"
+        }},
     "functions": [],
     "variables": {},
     "resources": [{
-        "name": "[toLower('princessvm1storage')]",
+        "name": "[toLower(parameters('storageacct name'))]",
         "type": "Microsoft.Storage/storageAccounts",
         "apiVersion": "2023-01-01",
         "location": "[resourceGroup().location]",
         "tags": {
-            "displayName": "princessvm1 Storage Account"
+            "displayName": "[parameters('storageacct name')]"
         },
         "sku": {
             "name": "Standard_LRS"
@@ -18,22 +47,22 @@
         "kind": "Storage"
     },
     {
-        "name": "princessvm1-PublicIP",
+        "name": "[parameters('enter name of public ip')]",
         "type": "Microsoft.Network/publicIPAddresses",
         "apiVersion": "2023-04-01",
         "location": "[resourceGroup().location]",
         "tags": {
-            "displayName": "PublicIPAddress"
+            "displayName": "[parameters('enter name of public ip')]"
         },
         "properties": {
             "publicIPAllocationMethod": "Dynamic",
             "dnsSettings": {
-                "domainNameLabel": "[toLower('princessvm1')]"
+                "domainNameLabel": "[toLower(parameters('enter name of vm'))]"
             }
         }
     },
     {
-        "name": "princessvm1-nsg",
+        "name": "[parameters('enter name of nsg')]",
         "type": "Microsoft.Network/networkSecurityGroups",
         "apiVersion": "2023-04-01",
         "location": "[resourceGroup().location]",
@@ -57,15 +86,15 @@
         }
     },
     {
-        "name": "princessvm1-VirtualNetwork",
+        "name": "[parameters('enter name of vn')]",
         "type": "Microsoft.Network/virtualNetworks",
         "apiVersion": "2023-04-01",
         "location": "[resourceGroup().location]",
         "dependsOn": [
-            "[resourceId('Microsoft.Network/networkSecurityGroups', 'princessvm1-nsg')]"
+            "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('enter name of nsg'))]"
         ],
         "tags": {
-            "displayName": "princessvm1-VirtualNetwork"
+            "displayName": "[parameters('enter name of vn')]"
         },
         "properties": {
             "addressSpace": {
@@ -75,11 +104,11 @@
             },
             "subnets": [
                 {
-                    "name": "princessvm1-VirtualNetwork-Subnet",
+                    "name": "[parameters('enter name of subnet')]",
                     "properties": {
                         "addressPrefix": "10.0.0.0/24",
                         "networkSecurityGroup": {
-                            "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'princessvm1-nsg')]"
+                            "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('enter name of nsg'))]"
                         }
                     }
                 }
@@ -87,16 +116,16 @@
         }
     },
     {
-        "name": "princessvm1-NetworkInterface",
+        "name": "[parameters('enter name of ni')]",
         "type": "Microsoft.Network/networkInterfaces",
         "apiVersion": "2023-04-01",
         "location": "[resourceGroup().location]",
         "dependsOn": [
-            "[resourceId('Microsoft.Network/publicIPAddresses', 'princessvm1-PublicIP')]",
-            "[resourceId('Microsoft.Network/virtualNetworks', 'princessvm1-VirtualNetwork')]"
+            "[resourceId('Microsoft.Network/publicIPAddresses', parameters('enter name of public ip'))]",
+            "[resourceId('Microsoft.Network/virtualNetworks', parameters('enter name of vn'))]"
         ],
         "tags": {
-            "displayName": "princessvm1 Network Interface"
+            "displayName": "[parameters('enter name of ni')]"
         },
         "properties": {
             "ipConfigurations": [
@@ -105,10 +134,10 @@
                     "properties": {
                         "privateIPAllocationMethod": "Dynamic",
                         "publicIPAddress": {
-                            "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'princessvm1-PublicIP')]"
+                            "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('enter name of public ip'))]"
                         },
                         "subnet": {
-                            "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'princessvm1-VirtualNetwork', 'princessvm1-VirtualNetwork-Subnet')]"
+                            "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('enter name of vn'), parameters('enter name of subnet'))]"
                         }
                     }
                 }
@@ -116,23 +145,23 @@
         }
     },
     {
-        "name": "princessvm1",
+        "name": "[parameters('enter name of vm')]",
         "type": "Microsoft.Compute/virtualMachines",
         "apiVersion": "2023-03-01",
         "location": "[resourceGroup().location]",
         "dependsOn": [
-            "[resourceId('Microsoft.Storage/storageAccounts', toLower('princessvm1storage'))]",
-            "[resourceId('Microsoft.Network/networkInterfaces', 'princessvm1-NetworkInterface')]"
+            "[resourceId('Microsoft.Storage/storageAccounts', toLower(parameters('storageacct name')))]",
+            "[resourceId('Microsoft.Network/networkInterfaces', parameters('enter name of ni'))]"
         ],
         "tags": {
-            "displayName": "princessvm1"
+            "displayName": "[parameters('enter name of vm')]"
         },
         "properties": {
             "hardwareProfile": {
                 "vmSize": "Standard_A2_v2"
             },
             "osProfile": {
-                "computerName": "princessvm1",
+                "computerName": "[parameters('enter name of vm')]",
                 "adminUsername": "adminUsername",
                 "adminPassword": "adminPassword123"
             },
@@ -152,14 +181,14 @@
             "networkProfile": {
                 "networkInterfaces": [
                     {
-                        "id": "[resourceId('Microsoft.Network/networkInterfaces', 'princessvm1-NetworkInterface')]"
+                        "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('enter name of ni'))]"
                     }
                 ]
             },
             "diagnosticsProfile": {
                 "bootDiagnostics": {
                     "enabled": true,
-                    "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', toLower('princessvm1storage'))).primaryEndpoints.blob]"
+                    "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', toLower(parameters('storageacct name')))).primaryEndpoints.blob]"
                 }
             }
         }

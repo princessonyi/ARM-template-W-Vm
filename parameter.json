@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "storageacct name": {
+        "value": "Princessstorage"
+      },
+
+      "enter name of public ip": {
+        "value": "princessIP"
+      },
+
+      "enter name of nsg": {
+        "value": "Princessnsg"
+      },
+
+      "enter name of vn": {
+        "value": "princessvn"
+      },
+
+      "enter name of ni": {
+        "value": "princessNIC"
+      },
+
+      "enter name of vm": {
+        "value": "princessVM"
+      },
+      
+      "enter name of subnet": {
+        "value": "Princesssubnet"
+      }
+    }
+  }
